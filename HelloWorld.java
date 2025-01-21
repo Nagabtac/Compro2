@@ -19,20 +19,16 @@ public class HelloWorld{
         }
     } catch (Exception e){
 
-        input.nextLine();
+        input.nextLine();// deletes enter key
         throw new RuntimeException(e);
     }
-        input.close(); // deletes enter key
-        
+        input.close(); 
         /***
          * this asks the user to add an extra message
          * 
          * @param extraMessage just a method for testing
          * 
          */
-
-
-        
     }
     public static String extraMessage(String answer){
         String extraMessage = "yo";
