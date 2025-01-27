@@ -67,6 +67,8 @@ public class kapeNaNakakaTulog {
         """, subtotal, vat, grandTotal);
 
         System.out.println(receipt);
+        
+        System.out.println(receipt);
 
 
         input.close();
