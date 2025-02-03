@@ -1,7 +1,0 @@
-how to print coffeeMenu     ---------------------
-     Subtotal: 200.00
-     VAT (12%): 24.00
-     Grand Total: 224.00
-     ---------------------
-
-This is a file writing example.
