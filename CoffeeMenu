@@ -3,7 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class kapeNaNakakaTulog {
+public class CoffeeMenu {
 
     // Global arrays and constants to make them available in any method (class-wide)
     private static String[][] CoffeeMenu = {{"Espresso", "Latte"},
