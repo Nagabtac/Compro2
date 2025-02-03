@@ -5,10 +5,15 @@ public class StudentGrades {
     while(true){
         //student 1
         p("Processing grade for student " + count + ": ");
+        
+                String [] subjects = {"Science", "Math", "Science"};
+            }
 
-        String [] subjects = {"Science", "Math"}
 
-    }
-    }
-  
+        }
+        
+            public static void p(String string) {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'p'");
+     }
 }
