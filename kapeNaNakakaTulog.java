@@ -1,89 +1,118 @@
-import java.util.Scanner;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class kapeNaNakakaTulog {
-    public static final  String coffeeMenu = String.format("""
-        ---Coffee Menu---
-       1. Espresso        - 50.0 PHP
-       2. Latte           - 70.0 PHP
-       3. Cappuccino      - 65.0 PHP
-       4. Mocha           - 80.0 PHP
-       0. Finish Order
-       """);
+
+    // Global arrays and constants to make them available in any method (class-wide)
+    private static String[][] CoffeeMenu = {{"Espresso", "Latte"},
+                                            {"Cappuccino", "Mocha"}};
+    private static double[][] CoffeePrices = {{50.0, 70.0},
+                                              {65.0, 80.0}};
+    private static final double VAT_RATE = 0.12;
+
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-        int[] order = new int[5];
-        double[] quantity = new double[5];
-        double subtotal = 0;  
-        double vat = 0;  
-        double grandTotal = 0; 
+        // Use a 2D array to track the order count for each coffee type
+        int[][] orderCount = new int[CoffeeMenu.length][CoffeeMenu[0].length];
+        String receipt = "\n---- Coffee Order Receipt ----\n";
+        double total = 0.0;
 
-        loop: for (int i = 0; i < 5; i++) { 
-            System.out.print(coffeeMenu);
+        while (true) {
+            displayMenu();
 
-            System.out.print("Choose Your Coffee (1-4) or 0 to finish: ");
-            order[i] = input.nextInt();
-            
-
-            if (order[i] > 4 || order[i] < 0) {
-                System.out.println("Invalid choice. Please try again.");
-                continue;
-            }
-
-            //int selectedItem = order[i];
-
-            if (order[i] == 0) {
-                break loop; 
-            }
-
-            System.out.print("Enter Quantity: ");
-            quantity[i] = input.nextDouble(); 
-
-            switch (order[i]) {
-                case 1:
-                    subtotal += 50 * quantity[i];  
+            System.out.print("Choose your coffee (1-" + (CoffeeMenu.length * CoffeeMenu[0].length) + ", or 0 to finish): ");
+            int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                if (choice == 0) {
                     break;
-                case 2:
-                    subtotal += 70 * quantity[i];
-                    break;
-                case 3:
-                    subtotal += 65 * quantity[i]; 
-                    break;
-                case 4:
-                    subtotal += 80 * quantity[i]; 
-                    break;
+                }
+                if (choice < 1 || choice > (CoffeeMenu.length * CoffeeMenu[0].length)) {
+                    System.out.println("Invalid choice. Please try again.");
+                    continue;
+                }
+
+                // Calculate the row and column of the selected coffee item
+                int row = (choice - 1) / CoffeeMenu[0].length; // Row of the selected coffee
+                int col = (choice - 1) % CoffeeMenu[0].length; // Column of the selected coffee
+
+                System.out.print("Enter quantity: ");
+                int quantity = Integer.parseInt(scanner.nextLine());
+                if (quantity < 1) {
+                    System.out.println("Quantity must be at least 1. Please try again.");
+                    continue;
+                }
+
+                // Increment the count of the chosen coffee
+                orderCount[row][col] += quantity;
+
+                // Show the current order immediately after quantity input
+                System.out.println("\nYou ordered: " + quantity + " x " + CoffeeMenu[row][col] + " @ " 
+                                    + CoffeePrices[row][col] + " PHP each.\n");
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
             }
         }
 
+        // Summarize the order using the 2D orderCount array
+        for (int i = 0; i < CoffeeMenu.length; i++) {
+            for (int j = 0; j < CoffeeMenu[i].length; j++) {
+                if (orderCount[i][j] > 0) {
+                    double itemTotal = CoffeePrices[i][j] * orderCount[i][j];
+                    total += itemTotal;
+                    receipt += String.format("%d x %s @ %.2f each\n", orderCount[i][j], CoffeeMenu[i][j], CoffeePrices[i][j]);
+                }
+            }
+        }
 
-        vat = subtotal * 0.12;  
-        grandTotal = subtotal + vat;  
+        double vat = total * VAT_RATE;
+        double grandTotal = total + vat;
 
-        String receipt = String.format("""
-             ---------------------
-             Subtotal: %.2f
-             VAT (12%%): %.2f
-             Grand Total: %.2f
-             ---------------------
-        """, subtotal, vat, grandTotal);
-
+        receipt += "---------------------------\n";
+        receipt += String.format("Subtotal: %.2f\n", total);
+        receipt += String.format("VAT (12%%): %.2f\n", vat);
+        receipt += String.format("Grand Total: %.2f\n", grandTotal);
+        receipt += "---------------------------\n";
 
         System.out.println(receipt);
 
-        try (FileWriter writer = new FileWriter("CoffeeReceipt.txt")) {
-            writer.write("how to print coffeeMenu");
-            writer.write(receipt);
-            writer.write("\nThis is a file writing example.");
-            System.out.println("Data successfully written to file.");
-        } catch (IOException e) {
-            System.out.println("An error occurred while writing to the file: " + e.getMessage());
-        }
-        //use 2d array?!?
-
-
-        input.close();
+        saveReceiptToFile(receipt);
+        scanner.close();
     }
-    
+
+    /**
+     * Method to display the coffee menu to the user.
+     */
+    private static void displayMenu() {
+        System.out.println("\n--- Coffee Menu ---");
+        int idx = 1;
+        for (int i = 0; i < CoffeeMenu.length; i++) {
+            for (int j = 0; j < CoffeeMenu[i].length; j++) {
+                System.out.printf("%d. %s - %.2f PHP\n", idx++, CoffeeMenu[i][j], CoffeePrices[i][j]);
+            }
+        }
+        System.out.println("0. Finish Order");
+    }
+
+    /**
+     * Method to save the receipt to a file
+     * @param receipt The receipt to save
+     */
+    private static void saveReceiptToFile(String receipt) {
+        File saveDir = new File("target/receipts");
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();
+        }
+        File receiptFile = new File(saveDir, "CoffeeReceipt.txt");
+        try (FileWriter writer = new FileWriter(receiptFile)) {
+            writer.write(receipt);
+            System.out.println("\nReceipt saved to CoffeeReceipt.txt");
+        } catch (IOException e) {
+            System.out.println("Error saving receipt: " + e.getMessage());
+        }
+    }
 }
