@@ -15,7 +15,7 @@ public class kapeNaNakakaTulog {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Use a 2D array to track the order count for each coffee type
+     
         int[][] orderCount = new int[CoffeeMenu.length][CoffeeMenu[0].length];
         String receipt = "\n---- Coffee Order Receipt ----\n";
         double total = 0.0;
@@ -35,9 +35,9 @@ public class kapeNaNakakaTulog {
                     continue;
                 }
 
-                // Calculate the row and column of the selected coffee item
-                int row = (choice - 1) / CoffeeMenu[0].length; // Row of the selected coffee
-                int col = (choice - 1) % CoffeeMenu[0].length; // Column of the selected coffee
+                
+                int row = (choice - 1) / CoffeeMenu[0].length; 
+                int col = (choice - 1) % CoffeeMenu[0].length; 
 
                 System.out.print("Enter quantity: ");
                 int quantity = Integer.parseInt(scanner.nextLine());
@@ -46,10 +46,9 @@ public class kapeNaNakakaTulog {
                     continue;
                 }
 
-                // Increment the count of the chosen coffee
+                
                 orderCount[row][col] += quantity;
 
-                // Show the current order immediately after quantity input
                 System.out.println("\nYou ordered: " + quantity + " x " + CoffeeMenu[row][col] + " @ " 
                                     + CoffeePrices[row][col] + " PHP each.\n");
 
@@ -58,7 +57,7 @@ public class kapeNaNakakaTulog {
             }
         }
 
-        // Summarize the order using the 2D orderCount array
+        
         for (int i = 0; i < CoffeeMenu.length; i++) {
             for (int j = 0; j < CoffeeMenu[i].length; j++) {
                 if (orderCount[i][j] > 0) {
